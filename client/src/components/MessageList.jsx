@@ -15,7 +15,7 @@ import { useSocket } from '../context/SocketContext';
 const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '😡'];
 
 function MessageList({ messages, currentUser }) {
-    const { addReaction, markMessageAsRead } = useSocket();
+    const { addReaction, markMessageAsRead, socket } = useSocket();
 
     const handleReaction = (messageId, reaction) => {
         addReaction(messageId, reaction);
@@ -26,18 +26,43 @@ function MessageList({ messages, currentUser }) {
     };
 
     const renderMessage = (message) => {
-        const isOwnMessage = message.sender._id === currentUser._id;
-        const hasBeenRead = message.readBy.some(read => 
-            read.user !== message.sender._id
-        );
+        const id = message._id || message.id;
+        const content = message.content || message.message || '';
+        const createdAt = message.createdAt || message.timestamp;
+        const senderObj = message.sender && typeof message.sender === 'object'
+            ? message.sender
+            : { username: message.sender };
+        const isOwnMessage = (message.senderId && socket && message.senderId === socket.id) || (currentUser && senderObj.username === currentUser.username);
+        const readBy = message.readBy || [];
+        const hasBeenRead = Array.isArray(readBy) ? readBy.length > 0 : false;
 
-        if (!isOwnMessage && !message.readBy.some(read => read.user === currentUser._id)) {
-            handleRead(message._id);
+        // mark as read if it's not our message and we haven't marked it yet
+        if (!isOwnMessage && socket && !readBy.includes(socket.id)) {
+            handleRead(id);
+        }
+
+        // System message rendering (join/leave notifications)
+        if (message.system) {
+            return (
+                <Box
+                    key={id}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mb: 2,
+                        opacity: 0.7
+                    }}
+                >
+                    <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                        {content}
+                    </Typography>
+                </Box>
+            );
         }
 
         return (
             <Box
-                key={message._id}
+                key={id}
                 sx={{
                     display: 'flex',
                     justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
@@ -59,11 +84,11 @@ function MessageList({ messages, currentUser }) {
                     >
                         {!isOwnMessage && (
                             <Typography variant="subtitle2" color="text.secondary">
-                                {message.sender.username}
+                                {senderObj.username}
                             </Typography>
                         )}
                         <Typography variant="body1">
-                            {message.content}
+                            {content}
                         </Typography>
                         <Box
                             sx={{
@@ -74,7 +99,7 @@ function MessageList({ messages, currentUser }) {
                             }}
                         >
                             <Typography variant="caption" color="text.secondary">
-                                {format(new Date(message.createdAt), 'HH:mm')}
+                                {createdAt ? format(new Date(createdAt), 'HH:mm') : ''}
                             </Typography>
                             {isOwnMessage && (
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -86,28 +111,25 @@ function MessageList({ messages, currentUser }) {
                                 </Box>
                             )}
                         </Box>
-                        {message.reactions?.length > 0 && (
+                        {/* reactions can be an object map or array; normalize to array */}
+                        {message.reactions && (
                             <Stack
                                 direction="row"
                                 spacing={0.5}
                                 sx={{ mt: 1 }}
                             >
-                                {message.reactions.map((reaction, index) => (
-                                    <Tooltip
-                                        key={index}
-                                        title={`${reaction.user.username} reacted with ${reaction.type}`}
-                                    >
-                                        <Box
-                                            sx={{
-                                                backgroundColor: 'action.hover',
-                                                borderRadius: 1,
-                                                padding: '2px 4px'
-                                            }}
-                                        >
-                                            {reaction.type}
-                                        </Box>
-                                    </Tooltip>
-                                ))}
+                                {Array.isArray(message.reactions)
+                                    ? message.reactions.map((reaction, index) => (
+                                        <Tooltip key={index} title={`${reaction.user?.username || reaction.user} reacted with ${reaction.type}`}>
+                                            <Box sx={{ backgroundColor: 'action.hover', borderRadius: 1, padding: '2px 4px' }}>{reaction.type}</Box>
+                                        </Tooltip>
+                                    ))
+                                    : Object.entries(message.reactions).map(([userId, type]) => (
+                                        <Tooltip key={userId} title={`${userId} reacted with ${type}`}>
+                                            <Box sx={{ backgroundColor: 'action.hover', borderRadius: 1, padding: '2px 4px' }}>{type}</Box>
+                                        </Tooltip>
+                                    ))
+                                }
                             </Stack>
                         )}
                     </Paper>

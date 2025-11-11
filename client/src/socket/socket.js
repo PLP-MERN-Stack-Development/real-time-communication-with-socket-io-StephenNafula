@@ -6,6 +6,13 @@ import { useEffect, useState } from 'react';
 // Socket.io connection URL
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
 
+// Message reaction types
+export const REACTION_TYPES = {
+  LIKE: '👍',
+  LOVE: '❤️',
+  LAUGH: '😂'
+};
+
 // Create socket instance
 export const socket = io(SOCKET_URL, {
   autoConnect: false,
@@ -21,6 +28,9 @@ export const useSocket = () => {
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
   const [typingUsers, setTypingUsers] = useState([]);
+  const [privateChats, setPrivateChats] = useState({});
+  const [notifications, setNotifications] = useState([]);
+  const [activeRoom, setActiveRoom] = useState('public');
 
   // Connect to socket server
   const connect = (username) => {
@@ -45,9 +55,33 @@ export const useSocket = () => {
     socket.emit('private_message', { to, message });
   };
 
+  // Join a private room
+  const joinPrivateRoom = (otherUserId) => {
+    socket.emit('join_private_room', { otherUserId });
+    setActiveRoom(otherUserId);
+  };
+
+  // Leave a private room
+  const leavePrivateRoom = () => {
+    if (activeRoom !== 'public') {
+      socket.emit('leave_private_room', { roomId: activeRoom });
+      setActiveRoom('public');
+    }
+  };
+
   // Set typing status
   const setTyping = (isTyping) => {
-    socket.emit('typing', isTyping);
+    socket.emit('typing', { isTyping, room: activeRoom });
+  };
+
+  // React to a message
+  const reactToMessage = (messageId, reaction) => {
+    socket.emit('message_reaction', { messageId, reaction });
+  };
+
+  // Mark message as read
+  const markMessageAsRead = (messageId) => {
+    socket.emit('mark_message_read', { messageId });
   };
 
   // Socket event listeners
@@ -65,11 +99,34 @@ export const useSocket = () => {
     const onReceiveMessage = (message) => {
       setLastMessage(message);
       setMessages((prev) => [...prev, message]);
+      
+      // Add notification if message is not in active room
+      if (message.room && message.room !== activeRoom) {
+        setNotifications(prev => [...prev, {
+          id: Date.now(),
+          message: `New message from ${message.sender}`,
+          room: message.room
+        }]);
+      }
     };
 
     const onPrivateMessage = (message) => {
       setLastMessage(message);
-      setMessages((prev) => [...prev, message]);
+      
+      // Add message to private chat messages
+      setPrivateChats(prev => ({
+        ...prev,
+        [message.room]: [...(prev[message.room] || []), message]
+      }));
+
+      // Add notification if not in active room
+      if (message.room !== activeRoom) {
+        setNotifications(prev => [...prev, {
+          id: Date.now(),
+          message: `New private message from ${message.sender}`,
+          room: message.room
+        }]);
+      }
     };
 
     // User events
@@ -108,6 +165,31 @@ export const useSocket = () => {
       setTypingUsers(users);
     };
 
+    // Message reactions and read receipts
+    const onMessageReaction = ({ messageId, reaction, userId }) => {
+      setMessages(prev => prev.map(msg => 
+        msg.id === messageId 
+          ? { ...msg, reactions: { ...msg.reactions, [userId]: reaction } }
+          : msg
+      ));
+    };
+
+    const onMessageRead = ({ messageId, userId }) => {
+      setMessages(prev => prev.map(msg => 
+        msg.id === messageId 
+          ? { ...msg, readBy: [...(msg.readBy || []), userId] }
+          : msg
+      ));
+    };
+
+    // Private room events
+    const onJoinPrivateRoom = ({ room, messages: roomMessages }) => {
+      setPrivateChats(prev => ({
+        ...prev,
+        [room]: roomMessages
+      }));
+    };
+
     // Register event listeners
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
@@ -117,6 +199,9 @@ export const useSocket = () => {
     socket.on('user_joined', onUserJoined);
     socket.on('user_left', onUserLeft);
     socket.on('typing_users', onTypingUsers);
+    socket.on('message_reaction', onMessageReaction);
+    socket.on('message_read', onMessageRead);
+    socket.on('join_private_room', onJoinPrivateRoom);
 
     // Clean up event listeners
     return () => {
@@ -128,6 +213,9 @@ export const useSocket = () => {
       socket.off('user_joined', onUserJoined);
       socket.off('user_left', onUserLeft);
       socket.off('typing_users', onTypingUsers);
+      socket.off('message_reaction', onMessageReaction);
+      socket.off('message_read', onMessageRead);
+      socket.off('join_private_room', onJoinPrivateRoom);
     };
   }, []);
 
@@ -138,11 +226,18 @@ export const useSocket = () => {
     messages,
     users,
     typingUsers,
+    privateChats,
+    notifications,
+    activeRoom,
     connect,
     disconnect,
     sendMessage,
     sendPrivateMessage,
     setTyping,
+    joinPrivateRoom,
+    leavePrivateRoom,
+    reactToMessage,
+    markMessageAsRead,
   };
 };
 
