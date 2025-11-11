@@ -16,7 +16,7 @@ A modern, feature-rich real-time chat application built with **React**, **Expres
 
 ---
 
-## 🎯 Project Overview
+##  Project Overview
 
 This real-time chat application enables users to:
 - **Login with a username** (no password required for simplicity)
@@ -33,41 +33,41 @@ The application uses **Socket.io** for real-time bidirectional communication bet
 
 ---
 
-## ✨ Features Implemented
+##  Features Implemented
 
 ### Core Features
-- ✅ **Real-time Messaging**: Instant message delivery and display
-- ✅ **User Authentication**: Simple username-based login (no password)
-- ✅ **Online Status**: See who's currently online with visual indicators
-- ✅ **User Join/Leave Notifications**: System messages when users connect or disconnect
-- ✅ **Global Chat Room**: Broadcast messages to all connected users
+-  **Real-time Messaging**: Instant message delivery and display
+-  **User Authentication**: Simple username-based login (no password)
+-  **Online Status**: See who's currently online with visual indicators
+-  **User Join/Leave Notifications**: System messages when users connect or disconnect
+-  **Global Chat Room**: Broadcast messages to all connected users
 
 ### Socket.io Features
-- ✅ **Typing Indicators**: See when other users are typing
-- ✅ **Private Chats**: One-on-one messaging between users
-- ✅ **Message Reactions**: React to messages with emoji reactions (👍 ❤️ 😂)
-- ✅ **Read Receipts**: Single/double checkmarks show message delivery and read status
-- ✅ **Message History**: Load previous messages when joining a room
-- ✅ **Room Management**: Private rooms and channels for organized conversations
+-  **Typing Indicators**: See when other users are typing
+-  **Private Chats**: One-on-one messaging between users
+-  **Message Reactions**: React to messages with emoji reactions (👍 ❤️ 😂)
+-  **Read Receipts**: Single/double checkmarks show message delivery and read status
+-  **Message History**: Load previous messages when joining a room
+-  **Room Management**: Private rooms and channels for organized conversations
 
 ### UI/UX Features
-- ✅ **Multi-channel Support**: Switch between different chat channels (General, Random)
-- ✅ **Sidebar User List**: View all online users with real-time updates
-- ✅ **Unread Message Badges**: Badges show unread message counts
-- ✅ **Dark Theme**: Material-UI dark theme for comfortable viewing
-- ✅ **Responsive Design**: Works on desktop and tablet screens
-- ✅ **Message Filtering**: Automatically filters messages per room/private chat
+-  **Multi-channel Support**: Switch between different chat channels (General, Random)
+-  **Sidebar User List**: View all online users with real-time updates
+-  **Unread Message Badges**: Badges show unread message counts
+-  **Dark Theme**: Material-UI dark theme for comfortable viewing
+-  **Responsive Design**: Works on desktop and tablet screens
+-  **Message Filtering**: Automatically filters messages per room/private chat
 
 ### Advanced Features
-- ✅ **Persistent Sessions**: Username saved to localStorage
-- ✅ **Notification Sounds**: Web Audio API tone on new messages
-- ✅ **Offline User Filtering**: Only shows online users in the sidebar
-- ✅ **Duplicate User Prevention**: Same username can only have one active session
-- ✅ **System Messages**: Join/leave notifications displayed in chat
+-  **Persistent Sessions**: Username saved to localStorage
+-  **Notification Sounds**: Web Audio API tone on new messages
+-  **Offline User Filtering**: Only shows online users in the sidebar
+-  **Duplicate User Prevention**: Same username can only have one active session
+-  **System Messages**: Join/leave notifications displayed in chat
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 ### Frontend
 - **React 18** - UI library
@@ -89,7 +89,7 @@ The application uses **Socket.io** for real-time bidirectional communication bet
 
 ---
 
-## 🚀 Setup Instructions
+##  Setup Instructions
 
 ### Prerequisites
 - Node.js (v16 or higher)
@@ -225,7 +225,7 @@ real-time-communication-with-socket-io-StephenNafula/
 
 ---
 
-## 💻 Usage
+##  Usage
 
 ### Logging In
 
@@ -258,7 +258,7 @@ real-time-communication-with-socket-io-StephenNafula/
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 ### Login Page
 ![Login Screenshot](client/public/screenshots/login.png)
@@ -276,7 +276,7 @@ The main chat interface showing:
 
 ---
 
-## 🎁 Advanced Features
+##  Advanced Features
 
 ### Message Reactions
 Users can add emoji reactions to messages (👍 ❤️ 😂 😮 😢 😡). Reactions appear below messages and show who reacted with what emoji.
@@ -309,7 +309,7 @@ Each private conversation is stored in a unique room (based on sorted socket IDs
 
 ---
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Issue: "Connection refused" error
 **Solution**: 
@@ -354,7 +354,7 @@ git gc --aggressive
 
 ---
 
-## 📝 Environment Variables
+##  Environment Variables
 
 ### Backend (.env)
 ```env
@@ -370,22 +370,22 @@ VITE_SERVER_URL=http://localhost:5000 # Backend server URL
 
 ---
 
-## 🔐 Security Notes
+##  Security Notes
 
 This is a **demonstration/educational application**. For production use, consider:
 
-- ✋ Add proper authentication (JWT, OAuth)
-- 🔐 Implement password hashing
-- 🛡️ Add rate limiting and input validation
-- 💾 Use a persistent database (MongoDB, PostgreSQL)
-- 🔒 Enable HTTPS/WSS for encryption
-- 🎯 Implement user permissions and roles
-- 📊 Add message encryption
-- 🧹 Implement proper session management
+-  Add proper authentication (JWT, OAuth)
+-  Implement password hashing
+-  Add rate limiting and input validation
+-  Use a persistent database (MongoDB, PostgreSQL)
+-  Enable HTTPS/WSS for encryption
+-  Implement user permissions and roles
+-  Add message encryption
+-  Implement proper session management
 
 ---
 
-## 📚 Learning Resources
+##  Learning Resources
 
 - [Socket.io Documentation](https://socket.io/docs/)
 - [React Documentation](https://react.dev/)
@@ -395,13 +395,13 @@ This is a **demonstration/educational application**. For production use, conside
 
 ---
 
-## 📄 License
+##  License
 
 This project is open-source and available for educational purposes.
 
 ---
 
-## 👥 Contributing
+##  Contributing
 
 Contributions are welcome! Feel free to:
 - Report bugs
@@ -411,7 +411,7 @@ Contributions are welcome! Feel free to:
 
 ---
 
-## 📞 Support
+##  Support
 
 For issues, questions, or suggestions:
 1. Check the [Troubleshooting](#troubleshooting) section
@@ -421,8 +421,8 @@ For issues, questions, or suggestions:
 
 ---
 
-## 🎉 Congratulations!
+##  Congratulations!
 
 You now have a fully functional real-time chat application. Start chatting with friends, test the features, and enjoy real-time communication!
 
-**Happy Chatting!** 💬 
+**Happy Chatting!**  
